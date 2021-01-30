@@ -1,0 +1,11 @@
+# Adapt to Ubuntu18.04
+# Author: Yihong Lin
+# Date: 2020-11-23
+# 声明：本文档来源于官网资料整理，亲测可行,需要先完成相机自动标定。
+1.编写yaml文件，样例文件见Asus.yaml,可以通过rostopic echo的方式查找标定的参数
+2.修改Examples里面的ros_rgbd.cc文件：修改subsriber中的message名称与相机对应
+3.重新编译Examples里面的ORB_SLAM2这个package
+4.在ORB_SLAM2这个project目录下运行如下命令：
+roscore
+rosrun ORB_SLAM2 RGBD Vocabulary/ORBvoc.txt Examples/ROS/ORB_SLAM2/Asus.yaml 
+roslaunch realsense2_camera rs_camera.launch

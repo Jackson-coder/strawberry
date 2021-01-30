@@ -1,0 +1,13 @@
+# Adapt to Ubuntu18.04
+# Reference: 	https://dev.intelrealsense.com/docs/self-calibration-for-depth-cameras
+# Author: Yihong Lin
+# Date: 2020-11-22
+# 声明：本文档来源于官网资料整理，亲测可行,需要先安装完Intel RealSense SDK 2.0以及预编译的debian包之后才可按本文档完成相机自动标定。
+1.将相机朝着纹理比较丰富的环境，不一定是平面
+2.打开 realsense_viewer
+3.将 "Stereo Module" 中的 “Emitter Enabled” 设置为 “Laser”
+4.在 “More” 下拉菜单中选择 "On-Chip Calibration"
+5.选择 "Calibrate"
+6.查看 "Health-Check" 的数值， 一般小于 0.25 是可以接受的。
+7.如果新的标定参数比之前的好，就 “Apply New” 将新的参数烧入 Firmware 中。
+
