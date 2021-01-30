@@ -1,0 +1,46 @@
+# Adapt to Ubuntu18.04
+# Reference: https://dev.intelrealsense.com/docs/compiling-librealsense-for-linux-ubuntu-guide#section-building-librealsense-2-sdk
+# Author: Yihong Lin
+# Date: 2020-11-19
+# 声明：本文档来源于官网资料整理，亲测可行
+1.注册服务器的公用密钥：
+sudo apt-key adv --keyserver keys.gnupg.net --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE || sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-key F6E65AC044F831AC80A06380C8B3A55A6F3EFCDE 
+2.将服务器添加到存储库列表中：
+sudo add-apt-repository "deb http://realsense-hw-public.s3.amazonaws.com/Debian/apt-repo bionic main" -u
+3.通过调用刷新本地包缓存，升级所有已安装的软件包
+sudo apt-get update
+sudo apt-get upgrade
+4.安装编译依赖
+sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev
+sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+5.安装库
+sudo apt-get install librealsense2-dkms
+sudo apt-get install librealsense2-utils
+sudo apt-get install librealsense2-dev
+sudo apt-get install librealsense2-dbg
+6.通过调用刷新本地包缓存，升级所有已安装的软件包
+sudo apt-get update
+sudo apt-get upgrade
+7.下载/克隆librealsense仓库:
+git clone https://github.com/IntelRealSense/librealsense.git
+8.下载librealsense目录下的 Intel Realsense 许可证脚本:
+cd librealsense
+sudo cp config/99-realsense-libusb.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules && udevadm trigger
+9.运行许可脚本
+./scripts/setup_udev_rules.sh
+10.下载并编译内核模块
+./scripts/patch-realsense-ubuntu-lts.sh
+11.查看驱动登记情况
+sudo dmesg | tail -n 50
+12.编译SDK2.0
+mkdir build && cd build
+cmake ../ -DBUILD_EXAMPLES=true
+sudo make uninstall && make clean && make -j4 && sudo make install
+注：-DCMAKE_BUILD_TYPE=Release 编译release版本
+13.尝试打开摄像头
+cd examples/capture
+./rs-capture
+
+
+

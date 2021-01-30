@@ -1,0 +1,18 @@
+# Adapt to Ubuntu18.04
+# Reference: 	https://github.com/IntelRealSense/realsense-ros
+		https://github.com/pal-robotics/ddynamic_reconfigure/branches
+# Author: Yihong Lin
+# Date: 2020-11-19
+# 声明：本文档来源于官网资料整理，亲测可行
+1.在工作空间下下载仓库
+git clone https://github.com/IntelRealSense/realsense-ros.git
+git clone https://github.com/pal-robotics/ddynamic_reconfigure/branches.git
+2.编译
+catkin_make
+3.测试安装是否成功
+roslaunch realsense2_camera rs_camera.launch
+rostopic list
+4.rviz显示
+Terminal 1:roslaunch realsense2_camera rs_camera.launch filters:=pointcloud
+Terminal 2:rosrun rviz rviz
+在rviz中增加pointcloud2选项
