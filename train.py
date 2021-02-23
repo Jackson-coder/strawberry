@@ -208,7 +208,11 @@ if __name__ == "__main__":
     #   训练自己的数据集时提示维度不匹配正常
     #   预测的东西都不一样了自然维度不匹配
     #------------------------------------------------------#
-    weights_path = 'model_data/yolov4_tiny_weights_coco.h5'
+    weights_path = 'model_data/yolov4_tiny_weights_voc.h5'
+    #------------------------------------------------------#
+    #   训练模式
+    #------------------------------------------------------#
+    pattern = 'yolo_tiny'
     #------------------------------------------------------#
     #   训练用图片大小
     #   一般在416x416和608x608选择
@@ -255,8 +259,8 @@ if __name__ == "__main__":
     #-------------------------------------------#
     #   权值文件的下载请看README
     #-------------------------------------------#
-    print('Load weights {}.'.format(weights_path))
-    model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
+    # print('Load weights {}.'.format(weights_path))
+    # model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
     
     # y_true为13,13,3,85
     # 26,26,3,85
@@ -281,7 +285,7 @@ if __name__ == "__main__":
     logging = TensorBoard(log_dir=log_dir)
     checkpoint = ModelCheckpoint(log_dir + 'ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5',
         monitor='val_loss', save_weights_only=True, save_best_only=False, period=1)
-    early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=1)
+    early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=10, verbose=2)
 
     #----------------------------------------------------------------------#
     #   验证集的划分在train.py代码里面进行
@@ -312,7 +316,7 @@ if __name__ == "__main__":
     if True:
         Init_epoch = 0
         Freeze_epoch = 50
-        batch_size = 32
+        batch_size = 16
         learning_rate_base = 1e-3
 
         if Cosine_scheduler:
@@ -332,7 +336,7 @@ if __name__ == "__main__":
                                                         )
             model.compile(optimizer=Adam(), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
         else:
-            reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1)
+            reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=2)
             model.compile(optimizer=Adam(learning_rate_base), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
 
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
@@ -351,7 +355,7 @@ if __name__ == "__main__":
     if True:
         Freeze_epoch = 50
         Epoch = 100
-        batch_size = 32
+        batch_size = 16
         learning_rate_base = 1e-4
 
         if Cosine_scheduler:
@@ -371,7 +375,7 @@ if __name__ == "__main__":
                                                         )
             model.compile(optimizer=Adam(), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
         else:
-            reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=1)
+            reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.5, patience=3, verbose=2)
             model.compile(optimizer=Adam(learning_rate_base), loss={'yolo_loss': lambda y_true, y_pred: y_pred})
 
         print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
