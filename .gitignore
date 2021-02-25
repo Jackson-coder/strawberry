@@ -1,2 +1,9 @@
 build
 .vscode
+VOCdevkit
+VOC2007
+img
+__pycache__
+*.pyc 
+logs
+.ipynb_checkpoints

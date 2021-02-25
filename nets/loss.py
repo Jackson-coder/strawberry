@@ -102,6 +102,7 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, label_smoothing=0.1,
 
     # 一共有两层
     num_layers = len(anchors)//3 
+    print(num_layers)
 
     #---------------------------------------------------------------------------------------------------#
     #   将预测结果和实际ground truth分开，args是[*model_body.output, *y_true]
@@ -110,7 +111,7 @@ def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, label_smoothing=0.1,
     #---------------------------------------------------------------------------------------------------#
     y_true = args[num_layers:]
     yolo_outputs = args[:num_layers]
-
+    print(len(y_true),len(yolo_outputs))
     #-----------------------------------------------------------#
     #   13x13的特征层对应的anchor是[81,82], [135,169], [344,319]
     #   26x26的特征层对应的anchor是[23,27], [37,58], [81,82]

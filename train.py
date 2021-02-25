@@ -10,7 +10,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.optimizers import Adam
 
 from nets.loss import yolo_loss
-from nets.loss import yolo_loss
 from nets.yolo4_tiny.yolo4_tiny import yolo_body as yolo_body_tiny
 from nets.yolo4.yolo4 import yolo_body
 from utils.utils import (ModelCheckpoint, WarmUpCosineDecayScheduler,
@@ -197,12 +196,7 @@ if __name__ == "__main__":
     #   训练后的模型保存的位置，保存在logs文件夹里面
     #------------------------------------------------------#
     log_dir = 'logs/'
-    #----------------------------------------------------#
-    #   classes和anchor的路径，非常重要
-    #   训练前一定要修改classes_path，使其对应自己的数据集
-    #----------------------------------------------------#
-    classes_path = 'model_data/voc_classes.txt'    
-    anchors_path = 'model_data/yolo_anchors.txt'
+    
     #------------------------------------------------------#
     #   权值文件请看README，百度网盘下载
     #   训练自己的数据集时提示维度不匹配正常
@@ -210,9 +204,18 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     weights_path = 'model_data/yolov4_tiny_weights_voc.h5'
     #------------------------------------------------------#
-    #   训练模式
+    #   训练模式:yolo_tiny/yolo
     #------------------------------------------------------#
-    pattern = 'yolo_tiny'
+    pattern = 'yolo'
+    #----------------------------------------------------#
+    #   classes和anchor的路径，非常重要
+    #   训练前一定要修改classes_path，使其对应自己的数据集
+    #----------------------------------------------------#
+    classes_path = 'model_data/voc_classes.txt'    
+    if pattern == 'yolo':
+        anchors_path = 'model_data/yolo_anchors_.txt'
+    else:
+	    anchors_path = 'model_data/yolo_anchors.txt'
     #------------------------------------------------------#
     #   训练用图片大小
     #   一般在416x416和608x608选择
@@ -250,30 +253,37 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     image_input = Input(shape=(None, None, 3))
     h, w = input_shape
+    
     print('Create YOLOv4-Tiny model with {} anchors and {} classes.'.format(num_anchors, num_classes))
+
+    # y_true为13,13,3,85
+    # 26,26,3,85
     if pattern == 'yolo_tiny':
         model_body = yolo_body_tiny(image_input, num_anchors//2, num_classes)
+        model_body.summary()
+        y_true = [Input(shape=(h//{0:32, 1:16}[l], w//{0:32, 1:16}[l], num_anchors//2, num_classes+5)) for l in range(2)]
+        
     else:
         model_body = yolo_body(image_input, num_anchors//2, num_classes)
-    
+        y_true = [Input(shape=(h//{0:32, 1:16, 2:8}[l], w//{0:32, 1:16, 2:8}[l], num_anchors//3, num_classes+5)) for l in range(3)]
+        
     #-------------------------------------------#
     #   权值文件的下载请看README
     #-------------------------------------------#
-    # print('Load weights {}.'.format(weights_path))
-    # model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
+    #print('Load weights {}.'.format(weights_path))
+    #model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
     
-    # y_true为13,13,3,85
-    # 26,26,3,85
-    y_true = [Input(shape=(h//{0:32, 1:16}[l], w//{0:32, 1:16}[l], num_anchors//2, num_classes+5)) for l in range(2)]
-
     #------------------------------------------------------#
     #   在这个地方设置损失，将网络的输出结果传入loss函数
     #   把整个模型的输出作为loss
     #------------------------------------------------------#
     loss_input = [*model_body.output, *y_true]
+    print(len(model_body.output),' ',len(y_true))
     model_loss = Lambda(yolo_loss, output_shape=(1,), name='yolo_loss',
         arguments={'anchors': anchors, 'num_classes': num_classes, 'ignore_thresh': 0.5, 'label_smoothing': label_smoothing})(loss_input)
+    
     model = Model([model_body.input, *y_true], model_loss)
+    
 
     #-------------------------------------------------------------------------------#
     #   训练参数的设置
@@ -315,7 +325,7 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     if True:
         Init_epoch = 0
-        Freeze_epoch = 50
+        Freeze_epoch = 1
         batch_size = 16
         learning_rate_base = 1e-3
 
@@ -347,14 +357,14 @@ if __name__ == "__main__":
                 epochs=Freeze_epoch,
                 initial_epoch=Init_epoch,
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping])
-        model.save_weights(log_dir + 'trained_weights_stage_1.h5')
+        model.save_weights(log_dir + 'trained_weights_stage_2.h5')
 
     for i in range(freeze_layers): model_body.layers[i].trainable = True
 
     # 解冻后训练
     if True:
-        Freeze_epoch = 50
-        Epoch = 100
+        Freeze_epoch = 1
+        Epoch = 2
         batch_size = 16
         learning_rate_base = 1e-4
 
@@ -386,4 +396,4 @@ if __name__ == "__main__":
                 epochs=Epoch,
                 initial_epoch=Freeze_epoch,
                 callbacks=[logging, checkpoint, reduce_lr, early_stopping])
-        model.save_weights(log_dir + 'last1.h5')
+        model.save_weights(log_dir + 'last2.h5')

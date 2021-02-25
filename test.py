@@ -5,12 +5,17 @@
 #--------------------------------------------#
 from tensorflow.keras.layers import Input
 
-from nets.yolo4_tiny.yolo4_tiny import yolo_body
+from nets.yolo4.yolo4 import yolo_body
 
 if __name__ == "__main__":
     inputs = Input([416,416,3])
     model = yolo_body(inputs,3,80)
     model.summary()
 
-    for i,layer in enumerate(model.layers):
-        print(i,layer.name) 
+# var = 1
+# a = 3
+# def fun():
+#     global var
+#     var = var + 1
+#     return var
+

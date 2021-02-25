@@ -15,6 +15,8 @@ def yolo_body(inputs, num_anchors, num_classes):
 
     model.summary()
 
+    print(inputs.shape)
+
     return model
 #---------------------------------------------------#
 #   将预测值的每个特征层调成真实值
