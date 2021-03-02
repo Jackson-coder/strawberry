@@ -100,7 +100,7 @@ def box_iou(b1, b2):
 #---------------------------------------------------#
 def yolo_loss(args, anchors, num_classes, ignore_thresh=.5, label_smoothing=0.1, print_loss=False, normalize=True):
 
-    # 一共有两层
+    # 一共有两层/三层
     num_layers = len(anchors)//3 
     print(num_layers)
 

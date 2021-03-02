@@ -110,7 +110,7 @@ def yolo_head(P6, P7, P8, num_anchors, num_classes):
     P8_output = tf.keras.layers.Conv2D(
         filters=batch_size, kernel_size=(1, 1))(P8_output)
 
-    return P6_output, P7_output, P8_output
+    return P8_output, P7_output, P6_output
 
 
 def neck_and_head(feat1, feat2, feat3, num_anchors, num_classes):
