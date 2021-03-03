@@ -23,8 +23,8 @@ from utils.utils import letterbox_image
 #--------------------------------------------#
 class YOLO(object):
     _defaults = {
-        "model_path"        : 'logs/last1.h5',#'model_data/yolov4_tiny_weights_voc.h5',
-        "anchors_path"      : 'model_data/yolo_anchors.txt',
+        "model_path"        : 'model_data/yolo4_voc_weights.h5',#'model_data/yolov4_tiny_weights_voc.h5',
+        "anchors_path"      : 'model_data/yolo_anchors_.txt',
         "classes_path"      : 'model_data/voc_classes.txt',
         "score"             : 0.5,
         "iou"               : 0.3,
@@ -33,7 +33,7 @@ class YOLO(object):
         # 显存比较小可以使用416x416
         # 显存比较大可以使用608x608
         "model_image_size"  : (416, 416),
-        "pattern"           : 'yolo_tiny'
+        "pattern"           : 'yolo'
     }
 
     @classmethod
@@ -53,6 +53,7 @@ class YOLO(object):
         if not self.eager:
             tf.compat.v1.disable_eager_execution()
             self.sess = K.get_session()
+        print(len(self.anchors))
         self.generate()
 
     #---------------------------------------------------#
@@ -94,7 +95,7 @@ class YOLO(object):
         if self.pattern == 'yolo_tiny':
             self.yolo_model = yolo_body_tiny(Input(shape=(None,None,3)), num_anchors//2, num_classes)
         else:
-            self.yolo_model = yolo_body(Input(shape=(None,None,3)), num_anchors//2, num_classes)
+            self.yolo_model = yolo_body(Input(shape=(None,None,3)), num_anchors//3, num_classes)
         self.yolo_model.load_weights(self.model_path)
         print('{} model, anchors, and classes loaded.'.format(model_path))
 
