@@ -6,8 +6,8 @@ import os
 import random 
 random.seed(0)
 
-xmlfilepath=r'/home/lin/strawberry/VOCdevkit/VOC2007/Annotations'
-saveBasePath=r"/home/lin/strawberry/VOCdevkit/VOC2007/ImageSets/Main"
+xmlfilepath=r'Annotations'
+saveBasePath=r"ImageSets/Main"
  
 #----------------------------------------------------------------------#
 #   想要增加测试集修改trainval_percent
