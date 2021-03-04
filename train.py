@@ -281,8 +281,8 @@ if __name__ == "__main__":
     #-------------------------------------------#
     #   权值文件的下载请看README
     #-------------------------------------------#
-    print('Load weights {}.'.format(weights_path))
-    model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
+    # print('Load weights {}.'.format(weights_path))
+    # model_body.load_weights(weights_path, by_name=True, skip_mismatch=True)
     
     # y_true为13,13,3,85
     # 26,26,3,85
